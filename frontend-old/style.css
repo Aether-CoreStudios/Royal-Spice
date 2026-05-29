@@ -1,0 +1,274 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --gold: #c8973a;
+  --gold-light: #f0c97f;
+  --dark: #0d0d0d;
+  --dark2: #1a1a1a;
+  --dark3: #252525;
+  --cream: #f5f0e8;
+  --cream2: #ede5d8;
+  --text: #f5f0e8;
+  --muted: #a09880;
+  --red: #d95f3b;
+  --success: #4caf6a;
+  --border: #333;
+}
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: "DM Sans", sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Playfair Display", serif;
+}
+
+/* NAV */
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(13, 13, 13, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+}
+
+.nav-link.active {
+  color: var(--gold);
+}
+
+.cart-btn {
+  background: var(--gold);
+  color: var(--dark);
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.badge {
+  background: var(--red);
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+/* PAGE */
+
+.page {
+  display: none;
+  padding-top: 64px;
+  min-height: 100vh;
+}
+
+.page.active {
+  display: block;
+}
+
+/* HERO */
+
+.hero {
+  height: calc(100vh - 64px);
+  background: linear-gradient(160deg, #0d0d0d 40%, #1a100a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+.hero h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+  color: var(--cream);
+}
+
+.hero h1 em {
+  color: var(--gold);
+}
+
+.hero-sub {
+  color: var(--muted);
+  max-width: 480px;
+  margin: 1rem auto 2rem;
+  line-height: 1.7;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--dark);
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.btn-outline {
+  background: none;
+  color: var(--cream);
+  border: 1px solid rgba(245, 240, 232, 0.3);
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+/* MENU */
+
+.menu-header {
+  background: var(--dark2);
+  border-bottom: 1px solid var(--border);
+  padding: 2rem;
+  text-align: center;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.menu-card {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.menu-card-img {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  background: var(--dark3);
+}
+
+.menu-card-body {
+  padding: 1.2rem;
+}
+
+.menu-card-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.menu-price {
+  color: var(--gold);
+}
+
+.menu-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.add-btn {
+  width: 100%;
+  background: var(--gold);
+  color: var(--dark);
+  border: none;
+  padding: 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* CART */
+
+.cart-wrap {
+  padding: 2rem;
+}
+
+.cart-items {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+/* TOAST */
+
+#toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--dark2);
+  border: 1px solid var(--gold);
+  color: var(--cream);
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+#toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ember & Oak Restaurant</title>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- NAV -->
+    <nav>
+      <div class="nav-logo">Ember & Oak</div>
+
+      <div class="nav-links">
+        <button class="nav-link active" onclick="showPage('home')">Home</button>
+        <button class="nav-link" onclick="showPage('menu')">Menu</button>
+        <button class="nav-link" onclick="showPage('reservation')">
+          Reserve
+        </button>
+        <button class="nav-link explore-page" onclick="showPage('explore')">
+          Explore
+        </button>
+        <button class="nav-link" onclick="showPage('database')">
+          API / DB
+        </button>
+
+        <button class="cart-btn" onclick="showPage('cart')">
+          🛒 Cart <span class="badge" id="cart-count">0</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <div>
+          <div class="hero-tag">Est. 2019 · Fine Dining</div>
+
+          <h1>
+            Where Fire Meets<br />
+            <em>Flavor</em>
+          </h1>
+
+          <p class="hero-sub">
+            An extraordinary culinary journey where wood-fire craft and seasonal
+            ingredients create unforgettable moments at your table.
+          </p>
+
+          <div class="hero-btns">
+            <button class="btn-primary" onclick="showPage('menu')">
+              Explore Menu
+            </button>
+
+            <button class="btn-outline" onclick="showPage('reservation')">
+              Reserve a Table
+            </button>
+          </div>
+        </div>
+
+        <div class="scroll-line">Scroll</div>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div class="page" id="page-menu">
+      <div class="menu-header">
+        <h2>Our Menu</h2>
+        <p style="color: var(--muted); margin-top: 0.5rem">
+          Crafted fresh, cooked with fire
+        </p>
+      </div>
+
+      <div class="cat-tabs">
+        <button class="cat-tab active" onclick="filterMenu('all', this)">
+          All
+        </button>
+
+        <button class="cat-tab" onclick="filterMenu('starters', this)">
+          Starters
+        </button>
+
+        <button class="cat-tab" onclick="filterMenu('mains', this)">
+          Mains
+        </button>
+
+        <button class="cat-tab" onclick="filterMenu('desserts', this)">
+          Desserts
+        </button>
+
+        <button class="cat-tab" onclick="filterMenu('drinks', this)">
+          Drinks
+        </button>
+      </div>
+
+      <div class="menu-grid" id="menu-grid"></div>
+    </div>
+
+    <!-- CART -->
+    <div class="page" id="page-cart">
+      <div class="menu-header">
+        <h2>Your Order</h2>
+      </div>
+
+      <div class="cart-wrap">
+        <div class="cart-items" id="cart-items-list"></div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast"></div>
+
+    <!-- External JS -->
+    <script src="script.js"></script>
+  </body>
+</html>
