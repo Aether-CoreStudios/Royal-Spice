@@ -5,7 +5,7 @@ const Order = require("../models/Order");
 const sendEmail = require("../utils/sendEmail");
 
 const router = express.Router();
-
+const User = require("../models/user");
 /* =========================
    CREATE ORDER
 ========================= */
