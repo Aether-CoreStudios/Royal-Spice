@@ -14,7 +14,7 @@ function Rooms() {
   };
   const fetchRooms = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/rooms");
+      const res = await axios.get("https://royal-spice.onrender.com/api/rooms");
       setRooms(res.data);
     } catch (error) {
       console.log(error);

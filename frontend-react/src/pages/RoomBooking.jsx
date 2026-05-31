@@ -73,23 +73,26 @@ function RoomBooking() {
 
       handler: async function (response) {
         try {
-          await axios.post("http://localhost:5000/api/room-bookings", {
-            ...formData,
+          await axios.post(
+            "https://royal-spice.onrender.com/api/room-bookings",
+            {
+              ...formData,
 
-            roomNumber: roomData.roomNumber,
+              roomNumber: roomData.roomNumber,
 
-            roomType: roomData.roomType,
+              roomType: roomData.roomType,
 
-            roomPrice: roomData.roomPrice,
+              roomPrice: roomData.roomPrice,
 
-            amount: totalAmount,
+              amount: totalAmount,
 
-            paymentStatus: "paid",
+              paymentStatus: "paid",
 
-            paymentId: response.razorpay_payment_id,
+              paymentId: response.razorpay_payment_id,
 
-            status: "booked",
-          });
+              status: "booked",
+            },
+          );
 
           alert("Room Booked Successfully");
 

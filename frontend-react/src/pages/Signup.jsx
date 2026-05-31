@@ -11,7 +11,7 @@ function Signup() {
 
   const registerUser = async () => {
     try {
-      await axios.post("http://localhost:5000/api/users/register", {
+      await axios.post("https://royal-spice.onrender.com/api/users/register", {
         name,
         email,
         password,

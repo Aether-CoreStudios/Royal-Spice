@@ -57,9 +57,12 @@ function AIWaiter() {
 
         return;
       }
-      const res = await axios.post("http://localhost:5000/api/chatbot", {
-        message: finalMessage,
-      });
+      const res = await axios.post(
+        "https://royal-spice.onrender.com/api/chatbot",
+        {
+          message: finalMessage,
+        },
+      );
 
       const botMessage = {
         sender: "bot",

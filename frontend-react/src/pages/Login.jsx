@@ -13,7 +13,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/login",
+        "https://royal-spice.onrender.com/api/users/login",
         {
           email,
           password,

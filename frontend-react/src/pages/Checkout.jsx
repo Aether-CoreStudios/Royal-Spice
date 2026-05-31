@@ -45,7 +45,7 @@ function Checkout() {
 
       handler: async function (response) {
         try {
-          await axios.post("http://localhost:5000/api/orders", {
+          await axios.post("https://royal-spice.onrender.com/api/orders", {
             user: name,
             email,
             items: cartItems,

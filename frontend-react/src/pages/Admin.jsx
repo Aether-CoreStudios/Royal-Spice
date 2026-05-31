@@ -37,7 +37,9 @@ function Admin() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/orders");
+      const response = await axios.get(
+        "https://royal-spice.onrender.com/api/orders",
+      );
 
       setOrders(response.data);
 
@@ -56,7 +58,7 @@ function Admin() {
   const fetchReservations = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/reservations",
+        "https://royal-spice.onrender.com/api/reservations",
       );
 
       if (Array.isArray(response.data)) {
@@ -75,7 +77,9 @@ function Admin() {
 
   const fetchMenu = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/menu");
+      const response = await axios.get(
+        "https://royal-spice.onrender.com/api/menu",
+      );
 
       setMenuItems(response.data);
     } catch (error) {
@@ -132,9 +136,12 @@ function Admin() {
       setReservations((prev) => prev.filter((item) => item._id !== id));
 
       // backend request
-      await axios.put(`http://localhost:5000/api/reservations/cancel/${id}`, {
-        email,
-      });
+      await axios.put(
+        `https://royal-spice.onrender.com/api/reservations/cancel/${id}`,
+        {
+          email,
+        },
+      );
 
       alert("Reservation Cancelled Successfully");
     } catch (error) {
@@ -152,7 +159,9 @@ function Admin() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete("http://localhost:5000/api/reservations/cancel-all");
+      await axios.delete(
+        "https://royal-spice.onrender.com/api/reservations/cancel-all",
+      );
 
       setReservations([]);
 
@@ -164,7 +173,7 @@ function Admin() {
   };
   const deleteOrder = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/orders/${id}`);
+      await axios.delete(`https://royal-spice.onrender.com/api/orders/${id}`);
 
       fetchOrders();
 
@@ -787,7 +796,7 @@ function Admin() {
                       <button
                         onClick={() =>
                           window.open(
-                            `http://localhost:5000/api/invoices/reservation/${item._id}`,
+                            `https://royal-spice.onrender.com/api/invoices/reservation/${item._id}`,
                           )
                         }
                         style={{
@@ -899,7 +908,7 @@ function Admin() {
                       onChange={async (e) => {
                         try {
                           await axios.put(
-                            `http://localhost:5000/api/orders/${order._id}`,
+                            `https://royal-spice.onrender.com/api/orders/${order._id}`,
                             {
                               orderStatus: e.target.value,
                             },

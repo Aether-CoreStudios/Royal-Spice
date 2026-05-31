@@ -11,7 +11,9 @@ function AdminRoomBookings() {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/room-bookings");
+      const res = await axios.get(
+        "https://royal-spice.onrender.com/api/room-bookings",
+      );
 
       setBookings(res.data);
     } catch (error) {
@@ -22,7 +24,7 @@ function AdminRoomBookings() {
   const checkoutRoom = async (booking) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/room-bookings/checkout/${booking._id}`,
+        `https://royal-spice.onrender.com/api/room-bookings/checkout/${booking._id}`,
       );
 
       alert("Room Checked Out Successfully");
@@ -37,7 +39,9 @@ function AdminRoomBookings() {
     try {
       if (!window.confirm("Delete this booking?")) return;
 
-      await axios.delete(`http://localhost:5000/api/room-bookings/${id}`);
+      await axios.delete(
+        `https://royal-spice.onrender.com/api/room-bookings/${id}`,
+      );
 
       alert("Booking deleted");
 
@@ -55,7 +59,9 @@ function AdminRoomBookings() {
     if (!confirmCheckout) return;
 
     try {
-      await axios.put("http://localhost:5000/api/room-bookings/checkout-all");
+      await axios.put(
+        "https://royal-spice.onrender.com/api/room-bookings/checkout-all",
+      );
 
       alert("All rooms checked out successfully");
 

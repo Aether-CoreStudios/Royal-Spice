@@ -8,7 +8,7 @@ function Order() {
   const handlePayment = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/payment/create-order",
+        "https://royal-spice.onrender.com/api/payment/create-order",
         {
           amount: price,
         },

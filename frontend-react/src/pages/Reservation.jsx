@@ -19,7 +19,7 @@ function Reservation() {
 
       try {
         const res = await axios.get(
-          `http://127.0.0.1:5000/api/reservations/reserved-tables?date=${date.toISOString().split("T")[0]}&time=${time}`,
+          `https://royal-spice.onrender.com/api/reservations/reserved-tables?date=${date.toISOString().split("T")[0]}&time=${time}`,
         );
 
         setReservedTables(res.data);
@@ -62,7 +62,7 @@ function Reservation() {
     }
     try {
       const check = await axios.post(
-        "http://127.0.0.1:5000/api/reservations/check-table",
+        "https://royal-spice.onrender.com/api/reservations/check-table",
         {
           date: date.toISOString().split("T")[0],
           time,
@@ -105,7 +105,7 @@ function Reservation() {
           };
 
           await axios.post(
-            "http://127.0.0.1:5000/api/reservations",
+            "https://royal-spice.onrender.com/api/reservations",
             reservationData,
           );
 
