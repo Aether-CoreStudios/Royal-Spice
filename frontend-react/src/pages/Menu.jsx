@@ -12,7 +12,7 @@ function Menu() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/menu")
+      .get("https://royal-spice.onrender.com/api/menu")
       .then((res) => {
         setMenuItems(res.data);
       })

@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/reservation/:id", async (req, res) => {
   try {
-    const Reservation = require("../models/Reservation");
+    const Reservation = require("../models/reservation");
 
     const reservation = await Reservation.findById(req.params.id);
 
