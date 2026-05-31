@@ -2,7 +2,7 @@ const express = require("express");
 const twilio = require("twilio");
 
 const sendEmail = require("../utils/sendEmail");
-const Reservation = require("../models/Reservation");
+const Reservation = require("../models/reservation");
 
 const router = express.Router();
 
