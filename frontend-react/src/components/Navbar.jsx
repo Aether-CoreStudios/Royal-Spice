@@ -163,6 +163,19 @@ function Navbar() {
           Orders
         </NavLink>
         <NavLink
+          to="/rooms"
+          style={({ isActive }) => ({
+            color: isActive ? "#C8973A" : "white",
+            borderBottom: isActive ? "2px solid #C8973A" : "none",
+            paddingBottom: "5px",
+            textDecoration: "none",
+            fontWeight: "bold",
+            transition: "0.3s",
+          })}
+        >
+          Rooms
+        </NavLink>
+        <NavLink
           to="/delivery-map"
           style={({ isActive }) => ({
             color: isActive ? "#C8973A" : "white",

@@ -13,9 +13,10 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import DeliveryMap from "./pages/DeliveryMap";
 import ScrollToTop from "./components/ScrollToTop";
-
+import Rooms from "./pages/Rooms";
+import RoomBooking from "./pages/RoomBooking";
 import Navbar from "./components/Navbar";
-
+import AdminRoomBookings from "./pages/AdminRoomBookings";
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
@@ -51,6 +52,9 @@ function App() {
         />
 
         <Route path="/delivery-map" element={<DeliveryMap />} />
+        <Route path="/rooms" element={<Rooms />} />
+        <Route path="/room-booking" element={<RoomBooking />} />
+        <Route path="/admin-room-bookings" element={<AdminRoomBookings />} />
       </Routes>
       <AIWaiter />
     </BrowserRouter>

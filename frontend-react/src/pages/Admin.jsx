@@ -24,7 +24,7 @@ function Admin() {
   const [menuItems, setMenuItems] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
-
+  const [searchReservation, setSearchReservation] = useState("");
   const [activeSection, setActiveSection] = useState("dashboard");
 
   useEffect(() => {
@@ -144,6 +144,35 @@ function Admin() {
       fetchReservations();
     }
   };
+  const cancelAllReservations = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to cancel ALL reservations?",
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete("http://localhost:5000/api/reservations/cancel-all");
+
+      setReservations([]);
+
+      alert("All reservations cancelled successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Failed to cancel reservations");
+    }
+  };
+  const deleteOrder = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/orders/${id}`);
+
+      fetchOrders();
+
+      alert("Order deleted");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div
       style={{
@@ -239,6 +268,16 @@ function Admin() {
             onClick={() => setActiveSection("reservations")}
           >
             Reservations
+          </li>
+          <li
+            onClick={() => navigate("/admin-room-bookings")}
+            style={{
+              ...menuStyle,
+              background: "#1E293B",
+              color: "white",
+            }}
+          >
+            Room Bookings
           </li>
 
           <li style={menuStyle} onClick={handleLogout}>
@@ -573,7 +612,46 @@ function Admin() {
 
         {activeSection === "reservations" && (
           <div style={sectionStyle}>
-            <h2 style={titleStyle}>Luxury Reservations</h2>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              <h2 style={titleStyle}>Luxury Reservations</h2>
+              <input
+                type="text"
+                placeholder="Search reservation by name"
+                value={searchReservation}
+                onChange={(e) => setSearchReservation(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  borderRadius: "10px",
+                  marginBottom: "20px",
+                  background: "#111827",
+                  color: "white",
+                  border: "1px solid #333",
+                }}
+              />
+
+              <button
+                onClick={cancelAllReservations}
+                style={{
+                  background: "#dc2626",
+                  color: "white",
+                  border: "none",
+                  padding: "12px 20px",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                Cancel All Reservations
+              </button>
+            </div>
 
             {reservations.length === 0 ? (
               <div
@@ -594,8 +672,13 @@ function Admin() {
                 }}
               >
                 {reservations
-                  ?.filter((item) => item.status !== "Cancelled")
                   .filter((item) => item.status !== "Cancelled")
+                  .filter((item) => item.status !== "Expired")
+                  .filter((item) =>
+                    item.name
+                      ?.toLowerCase()
+                      .includes(searchReservation.toLowerCase()),
+                  )
                   .map((item, index) => (
                     <motion.div
                       key={item._id}
@@ -659,6 +742,31 @@ function Admin() {
                         <strong style={{ color: "#C8973A" }}>Time:</strong>{" "}
                         {item.time}
                       </p>
+                      <p>
+                        <strong style={{ color: "#C8973A" }}>
+                          Reservation Fee:
+                        </strong>
+                        ₹{item.reservationFee}
+                      </p>
+
+                      <p>
+                        <strong style={{ color: "#C8973A" }}>
+                          Payment Status:
+                        </strong>
+                        <span style={{ color: "#22c55e", fontWeight: "bold" }}>
+                          {item.paymentStatus || "Paid"}
+                        </span>
+                      </p>
+
+                      <p>
+                        <strong style={{ color: "#C8973A" }}>
+                          Refund Status:
+                        </strong>
+
+                        <span style={{ color: "#f59e0b", fontWeight: "bold" }}>
+                          {item.refundStatus || "Pending"}
+                        </span>
+                      </p>
 
                       <button
                         onClick={() => cancelReservation(item._id, item.email)}
@@ -675,6 +783,25 @@ function Admin() {
                         }}
                       >
                         Cancel Reservation
+                      </button>
+                      <button
+                        onClick={() =>
+                          window.open(
+                            `http://localhost:5000/api/invoices/reservation/${item._id}`,
+                          )
+                        }
+                        style={{
+                          marginTop: "10px",
+                          background: "#2563EB",
+                          color: "white",
+                          border: "none",
+                          padding: "12px",
+                          borderRadius: "12px",
+                          cursor: "pointer",
+                          width: "100%",
+                        }}
+                      >
+                        Download Invoice
                       </button>
                     </motion.div>
                   ))}
@@ -753,7 +880,20 @@ function Admin() {
                     >
                       ₹{order.totalAmount}
                     </h1>
-
+                    <button
+                      onClick={() => deleteOrder(order._id)}
+                      style={{
+                        background: "#EF4444",
+                        color: "white",
+                        border: "none",
+                        padding: "10px 15px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        marginTop: "10px",
+                      }}
+                    >
+                      Delete Order
+                    </button>
                     <select
                       value={order.orderStatus || "Preparing"}
                       onChange={async (e) => {
