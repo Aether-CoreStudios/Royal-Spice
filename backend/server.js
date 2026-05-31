@@ -6,6 +6,8 @@ const cors = require("cors");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const roomRoutes = require("./routes/roomRoutes");
+const roomBookingRoutes = require("./routes/roomBookingRoutes");
 
 const userRoutes = require("./routes/userRoutes");
 const menuRoutes = require("./routes/menuRoutes");
@@ -14,6 +16,9 @@ const reservationRoutes = require("./routes/reservationRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 
 const app = express();
+const cron = require("node-cron");
+const expireReservations = require("./utils/expireReservations");
+const invoiceRoutes = require("./routes/invoiceRoutes");
 
 /* =========================
    SECURITY MIDDLEWARE
@@ -28,7 +33,9 @@ app.use(
 app.use(express.json());
 
 app.use("/api/chatbot", chatbotRoutes);
-
+app.use("/api/rooms", roomRoutes);
+app.use("/api/room-bookings", roomBookingRoutes);
+app.use("/api/invoices", invoiceRoutes);
 app.use(helmet());
 
 const limiter = rateLimit({

@@ -29,6 +29,32 @@ const reservationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    tableNumber: {
+      type: Number,
+      required: true,
+    },
+
+    tableStatus: {
+      type: String,
+      enum: ["available", "reserved", "closed"],
+      default: "available",
+    },
+    reservationFee: {
+      type: Number,
+      default: 500,
+    },
+    paymentStatus: {
+      type: String,
+      default: "paid",
+    },
+
+    paymentId: {
+      type: String,
+    },
+    refundStatus: {
+      type: String,
+      default: "Not Required",
+    },
   },
   {
     timestamps: true,
