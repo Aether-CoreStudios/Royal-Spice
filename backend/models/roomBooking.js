@@ -75,6 +75,15 @@ const roomBookingSchema = new mongoose.Schema(
     paymentId: {
       type: String,
     },
+    refundStatus: {
+      type: String,
+      enum: ["Not Required", "Pending", "Refunded"],
+      default: "Not Required",
+    },
+
+    refundId: {
+      type: String,
+    },
     status: {
       type: String,
       enum: [

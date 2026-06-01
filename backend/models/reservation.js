@@ -55,6 +55,9 @@ const reservationSchema = new mongoose.Schema(
       type: String,
       default: "Not Required",
     },
+    refundId: {
+      type: String,
+    },
   },
   {
     timestamps: true,
