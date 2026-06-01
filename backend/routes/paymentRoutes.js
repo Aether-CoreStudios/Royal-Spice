@@ -4,7 +4,7 @@ const crypto = require("crypto");
 
 const Reservation = require("../models/Reservation");
 const Order = require("../models/Order");
-const RoomBooking = require("../models/RoomBooking");
+const RoomBooking = require("../models/roomBooking");
 
 const router = express.Router();
 
