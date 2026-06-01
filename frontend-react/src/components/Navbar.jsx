@@ -141,7 +141,7 @@ function Navbar() {
             borderBottom: isActive ? "2px solid #C8973A" : "none",
           })}
         >
-          Cart ({totalItems})
+          🛒 {totalItems}
         </NavLink>
 
         <NavLink
@@ -211,7 +211,7 @@ function Navbar() {
 const cartStyle = {
   color: "#C8973A",
   textDecoration: "none",
-  fontSize: "17px",
+  fontSize: "13px",
   fontWeight: "bold",
 };
 
