@@ -179,7 +179,7 @@ function Reservation() {
         minHeight: "100vh",
         background: "linear-gradient(to bottom right,#050505,#0F172A,#111827)",
         color: "white",
-        paddingTop: "140px",
+        paddingTop: window.innerWidth <= 768 ? "230px" : "140px",
         paddingBottom: "60px",
       }}
     >
