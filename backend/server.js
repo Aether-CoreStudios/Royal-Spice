@@ -26,7 +26,7 @@ const invoiceRoutes = require("./routes/invoiceRoutes");
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://royal-spice-alpha.vercel.app"],
     credentials: true,
   }),
 );
