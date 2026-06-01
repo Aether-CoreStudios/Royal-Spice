@@ -2,8 +2,8 @@ const express = require("express");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 
-const Reservation = require("../models/Reservation");
-const Order = require("../models/Order");
+const Reservation = require("../models/reservation");
+const Order = require("../models/order");
 const RoomBooking = require("../models/roomBooking");
 
 const router = express.Router();
