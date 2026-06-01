@@ -9,7 +9,7 @@ function Rooms() {
     fetchRooms();
   }, []);
   const pageStyle = {
-    marginTop: "120px",
+    marginTop: "180px",
     padding: "20px",
   };
   const fetchRooms = async () => {
@@ -84,6 +84,7 @@ function Rooms() {
                 borderRadius: "30px",
                 fontWeight: "bold",
                 marginTop: "10px",
+
                 opacity: 0.8,
               }}
             >
