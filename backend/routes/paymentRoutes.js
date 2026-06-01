@@ -2,12 +2,14 @@ const express = require("express");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 
+const Reservation = require("../models/Reservation");
+const Order = require("../models/Order");
 const RoomBooking = require("../models/RoomBooking");
 
 const router = express.Router();
 
 /* =========================
-   RAZORPAY INSTANCE
+RAZORPAY INSTANCE
 ========================= */
 
 const razorpay = new Razorpay({
@@ -16,7 +18,7 @@ const razorpay = new Razorpay({
 });
 
 /* =========================
-   CREATE PAYMENT ORDER
+CREATE PAYMENT ORDER
 ========================= */
 
 router.post("/create-order", async (req, res) => {
@@ -46,7 +48,7 @@ router.post("/create-order", async (req, res) => {
 });
 
 /* =========================
-   VERIFY PAYMENT
+VERIFY PAYMENT
 ========================= */
 
 router.post("/verify-payment", async (req, res) => {
@@ -64,16 +66,16 @@ router.post("/verify-payment", async (req, res) => {
     const isAuthentic = expectedSignature === razorpay_signature;
 
     if (isAuthentic) {
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: "Payment Verified Successfully",
       });
-    } else {
-      res.status(400).json({
-        success: false,
-        message: "Payment Verification Failed",
-      });
     }
+
+    return res.status(400).json({
+      success: false,
+      message: "Payment Verification Failed",
+    });
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -82,43 +84,54 @@ router.post("/verify-payment", async (req, res) => {
 });
 
 /* =========================
-   REFUND PAYMENT
+REFUND PAYMENT
 ========================= */
 
 router.post("/refund", async (req, res) => {
   try {
     const { paymentId, amount } = req.body;
 
-    const booking = await RoomBooking.findOne({
-      paymentId,
-    });
-
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
-    }
-
-    if (booking.refundStatus === "Refunded") {
+    if (!paymentId) {
       return res.status(400).json({
         success: false,
-        message: "Payment already refunded",
+        message: "Payment ID is required",
       });
     }
 
     const refund = await razorpay.payments.refund(paymentId, {
-      amount: amount * 100,
+      amount: amount ? amount * 100 : undefined,
     });
 
-    booking.refundStatus = "Refunded";
-    booking.refundId = refund.id;
+    // ROOM BOOKINGS
+    await RoomBooking.findOneAndUpdate(
+      { paymentId },
+      {
+        refundStatus: "Refunded",
+        refundId: refund.id,
+      },
+    );
 
-    await booking.save();
+    // TABLE RESERVATIONS
+    await Reservation.findOneAndUpdate(
+      { paymentId },
+      {
+        refundStatus: "Refunded",
+        refundId: refund.id,
+      },
+    );
+
+    // FOOD ORDERS
+    await Order.findOneAndUpdate(
+      { paymentId },
+      {
+        refundStatus: "Refunded",
+        refundId: refund.id,
+      },
+    );
 
     res.status(200).json({
       success: true,
-      message: "Refund successful",
+      message: "Refund Successful",
       refund,
     });
   } catch (error) {

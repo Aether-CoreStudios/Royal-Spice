@@ -50,7 +50,15 @@ const orderSchema = new mongoose.Schema(
 
       default: "Pending",
     },
+    refundStatus: {
+      type: String,
+      enum: ["Not Required", "Pending", "Refunded"],
+      default: "Not Required",
+    },
 
+    refundId: {
+      type: String,
+    },
     // ORDER STATUS
 
     orderStatus: {
@@ -71,4 +79,4 @@ const orderSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("Order", orderSchema);
+module.exports = mongoose.models.Order || mongoose.model("Order", orderSchema);

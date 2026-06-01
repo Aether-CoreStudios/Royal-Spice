@@ -102,4 +102,6 @@ const roomBookingSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("RoomBooking", roomBookingSchema);
+module.exports =
+  mongoose.models.RoomBooking ||
+  mongoose.model("RoomBooking", roomBookingSchema);
