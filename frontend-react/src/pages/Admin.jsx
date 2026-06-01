@@ -812,6 +812,47 @@ function Admin() {
                       >
                         Download Invoice
                       </button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            const confirmRefund = window.confirm(
+                              `Refund reservation payment for ${item.name}?`,
+                            );
+
+                            if (!confirmRefund) return;
+
+                            await axios.post(
+                              "https://royal-spice.onrender.com/api/payment/refund",
+                              {
+                                paymentId: item.paymentId,
+                                amount: item.reservationFee,
+                              },
+                            );
+
+                            alert("Refund Successful");
+
+                            fetchReservations();
+                          } catch (error) {
+                            console.log(error);
+
+                            alert(
+                              error.response?.data?.message || "Refund Failed",
+                            );
+                          }
+                        }}
+                        style={{
+                          marginTop: "10px",
+                          background: "#F59E0B",
+                          color: "white",
+                          border: "none",
+                          padding: "12px",
+                          borderRadius: "12px",
+                          cursor: "pointer",
+                          width: "100%",
+                        }}
+                      >
+                        Refund Reservation
+                      </button>
                     </motion.div>
                   ))}
               </div>
@@ -902,6 +943,47 @@ function Admin() {
                       }}
                     >
                       Delete Order
+                    </button>
+                    <button
+                      onClick={async () => {
+                        try {
+                          const confirmRefund = window.confirm(
+                            `Refund order for ${order.user}?`,
+                          );
+
+                          if (!confirmRefund) return;
+
+                          await axios.post(
+                            "https://royal-spice.onrender.com/api/payment/refund",
+                            {
+                              paymentId: order.paymentId,
+                              amount: order.totalAmount,
+                            },
+                          );
+
+                          alert("Refund Successful");
+
+                          fetchOrders();
+                        } catch (error) {
+                          console.log(error);
+
+                          alert(
+                            error.response?.data?.message || "Refund Failed",
+                          );
+                        }
+                      }}
+                      style={{
+                        background: "#F59E0B",
+                        color: "white",
+                        border: "none",
+                        padding: "10px 15px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        marginTop: "10px",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      Refund Order
                     </button>
                     <select
                       value={order.orderStatus || "Preparing"}

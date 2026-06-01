@@ -71,7 +71,27 @@ function AdminRoomBookings() {
       alert("Failed to check out rooms");
     }
   };
+  const refundPayment = async (booking) => {
+    try {
+      const confirmRefund = window.confirm(
+        `Refund payment for ${booking.customerName}?`,
+      );
 
+      if (!confirmRefund) return;
+
+      await axios.post("https://royal-spice.onrender.com/api/payment/refund", {
+        paymentId: booking.paymentId,
+        amount: booking.amount,
+      });
+      alert("Refund Successful");
+
+      fetchBookings();
+    } catch (error) {
+      console.log(error);
+
+      alert(error.response?.data?.message || "Refund Failed");
+    }
+  };
   return (
     <div
       style={{
@@ -222,6 +242,10 @@ function AdminRoomBookings() {
                   {booking.paymentStatus}
                 </span>
               </p>
+              <p>
+                <strong>Refund Status:</strong>{" "}
+                {booking.refundStatus || "Not Required"}
+              </p>
 
               <div
                 style={{
@@ -257,6 +281,19 @@ function AdminRoomBookings() {
                   }}
                 >
                   Delete Booking
+                </button>
+                <button
+                  onClick={() => refundPayment(booking)}
+                  style={{
+                    background: "#F59E0B",
+                    color: "white",
+                    border: "none",
+                    padding: "10px",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Refund Payment
                 </button>
               </div>
             </div>

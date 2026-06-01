@@ -50,7 +50,12 @@ function Checkout() {
             email,
             items: cartItems,
             totalAmount,
+
             paymentId: response.razorpay_payment_id,
+            paymentStatus: "Paid",
+
+            refundStatus: "Not Required",
+
             address,
             phone,
             orderStatus: "Preparing",

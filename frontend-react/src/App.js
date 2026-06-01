@@ -20,9 +20,13 @@ import AdminRoomBookings from "./pages/AdminRoomBookings";
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
-    Notification.requestPermission();
-
-    new Notification("Welcome to Royal Spice 🍽️");
+    if ("Notification" in window) {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          new Notification("Welcome to Royal Spice 🍽️");
+        }
+      });
+    }
   }, []);
 
   return (

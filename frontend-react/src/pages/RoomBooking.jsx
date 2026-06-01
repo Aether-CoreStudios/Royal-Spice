@@ -17,8 +17,11 @@ function RoomBooking() {
   });
   const totalDays =
     formData.checkIn && formData.checkOut
-      ? (new Date(formData.checkOut) - new Date(formData.checkIn)) /
-        (1000 * 60 * 60 * 24)
+      ? Math.max(
+          1,
+          (new Date(formData.checkOut) - new Date(formData.checkIn)) /
+            (1000 * 60 * 60 * 24),
+        )
       : 1;
 
   const totalAmount = roomData.roomPrice * totalDays;
@@ -82,7 +85,7 @@ function RoomBooking() {
 
               roomType: roomData.roomType,
 
-              roomPrice: roomData.roomPrice,
+              roomPrice: totalAmount,
 
               amount: totalAmount,
 
@@ -165,7 +168,13 @@ function RoomBooking() {
 
         <p>Room Type: {roomData.roomType}</p>
 
-        <p>Price: ₹{roomData.roomPrice}</p>
+        <p>Price Per Day: ₹{roomData.roomPrice}</p>
+
+        <p>Total Days: {totalDays}</p>
+
+        <p style={{ color: "#C8973A", fontWeight: "bold" }}>
+          Total Amount: ₹{totalAmount}
+        </p>
         <p>
           Total Amount: ₹
           {formData.checkIn && formData.checkOut
