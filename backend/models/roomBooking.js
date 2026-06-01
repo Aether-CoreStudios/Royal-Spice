@@ -72,6 +72,9 @@ const roomBookingSchema = new mongoose.Schema(
       enum: ["pending", "paid", "failed"],
       default: "pending",
     },
+    paymentId: {
+      type: String,
+    },
     status: {
       type: String,
       enum: [

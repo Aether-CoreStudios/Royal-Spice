@@ -106,5 +106,50 @@ router.post(
     }
   },
 );
+/* =========================
+   REFUND PAYMENT
+========================= */
 
+router.post("/refund", async (req, res) => {
+  try {
+    const { paymentId, amount } = req.body;
+
+    const refund = await razorpay.payments.refund(paymentId, {
+      amount: amount * 100,
+    });
+
+    res.status(200).json({
+      success: true,
+      refund,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+router.post("/refund", async (req, res) => {
+  try {
+    const { paymentId } = req.body;
+
+    const refund = await razorpay.payments.refund(paymentId, {
+      speed: "normal",
+    });
+
+    res.status(200).json({
+      success: true,
+      refund,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
 module.exports = router;
