@@ -301,6 +301,8 @@ function Menu() {
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
+                    alert("TEST BUTTON");
+
                     const token = localStorage.getItem("token");
 
                     if (!token) {
