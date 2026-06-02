@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Rooms() {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchRooms();
@@ -15,12 +16,28 @@ function Rooms() {
   const fetchRooms = async () => {
     try {
       const res = await axios.get("https://royal-spice.onrender.com/api/rooms");
+
       setRooms(res.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
-
+  if (loading) {
+    return (
+      <div
+        style={{
+          color: "white",
+          textAlign: "center",
+          marginTop: "200px",
+          fontSize: "24px",
+        }}
+      >
+        Loading Rooms...
+      </div>
+    );
+  }
   return (
     <div style={pageStyle}>
       <h1>Rooms</h1>

@@ -6,7 +6,8 @@ import { motion } from "framer-motion";
 function Menu() {
   const { addToCart } = useContext(CartContext);
 
-  const [menuItems, setMenuItems] = useState([]);
+  const [menu, setMenu] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [search, setSearch] = useState("");
 
@@ -14,18 +15,31 @@ function Menu() {
     axios
       .get("https://royal-spice.onrender.com/api/menu")
       .then((res) => {
-        setMenuItems(res.data);
+        setMenu(res.data);
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
-  const categories = [
-    "All",
-    ...new Set(menuItems.map((item) => item.category)),
-  ];
-
+  const categories = ["All", ...new Set(menu.map((item) => item.category))];
+  if (loading) {
+    return (
+      <div
+        style={{
+          color: "white",
+          textAlign: "center",
+          marginTop: "200px",
+          fontSize: "24px",
+        }}
+      >
+        Loading Menu...
+      </div>
+    );
+  }
   return (
     <div
       style={{
@@ -170,7 +184,7 @@ function Menu() {
           padding: "80px 5%",
         }}
       >
-        {menuItems
+        {menu
           .filter((item) =>
             selectedCategory === "All"
               ? true
