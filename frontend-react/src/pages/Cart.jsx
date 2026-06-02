@@ -2,11 +2,21 @@ import React, { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function Cart() {
   const { cartItems, removeItem } = useContext(CartContext);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please Login First");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,

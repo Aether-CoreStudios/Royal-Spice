@@ -3,14 +3,24 @@ import autoTable from "jspdf-autotable";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 function MyOrders() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     fetchOrders();
   }, []);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please Login First");
+      navigate("/login");
+    }
+  }, [navigate]);
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
