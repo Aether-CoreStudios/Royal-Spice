@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -13,6 +14,16 @@ function Reservation() {
   const [time, setTime] = useState("");
   const [tableNumber, setTableNumber] = useState("");
   const [reservedTables, setReservedTables] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please Login First");
+      navigate("/login");
+    }
+  }, [navigate]);
   useEffect(() => {
     const fetchReservedTables = async () => {
       if (!time) return;
