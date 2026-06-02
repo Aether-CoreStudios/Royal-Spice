@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
 import { motion } from "framer-motion";
 
 function Menu() {
   const { addToCart } = useContext(CartContext);
+
+  const navigate = useNavigate();
 
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -297,14 +300,22 @@ function Menu() {
 
                 <motion.button
                   whileTap={{ scale: 0.95 }}
-                  onClick={() =>
+                  onClick={() => {
+                    const token = localStorage.getItem("token");
+
+                    if (!token) {
+                      alert("Please Login First");
+                      navigate("/login");
+                      return;
+                    }
+
                     addToCart({
                       _id: item._id,
                       name: item.name,
                       price: item.price,
                       image: item.image,
-                    })
-                  }
+                    });
+                  }}
                   style={{
                     marginTop: "25px",
                     width: "100%",
