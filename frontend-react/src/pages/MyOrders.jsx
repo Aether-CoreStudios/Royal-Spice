@@ -4,10 +4,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 function MyOrders() {
   const [orders, setOrders] = useState([]);
-
   useEffect(() => {
     fetchOrders();
   }, []);

@@ -1,6 +1,11 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
+
+import { auth } from "../firebase";
 
 function Signup() {
   const navigate = useNavigate();
@@ -8,20 +13,28 @@ function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const registerUser = async () => {
     try {
-      await axios.post("https://royal-spice.onrender.com/api/users/register", {
-        name,
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
         email,
         password,
-      });
+      );
 
-      alert("Account Created Successfully");
+      await sendEmailVerification(userCredential.user);
 
-      navigate("/login");
+      setSuccessMessage(
+        "Account created successfully! Please check your Inbox. If you don't see the verification email, check your Spam/Junk folder. Verify your email before logging in.",
+      );
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 5000);
     } catch (error) {
-      alert("Signup Failed");
+      console.log(error);
+      alert(error.message);
     }
   };
 
@@ -60,6 +73,22 @@ function Signup() {
         >
           Create Account
         </h1>
+
+        {successMessage && (
+          <div
+            style={{
+              background: "#d4edda",
+              color: "#155724",
+              padding: "15px",
+              borderRadius: "10px",
+              marginBottom: "20px",
+              fontSize: "14px",
+              lineHeight: "1.5",
+            }}
+          >
+            {successMessage}
+          </div>
+        )}
 
         <input
           type="text"
@@ -103,6 +132,7 @@ const inputStyle = {
   color: "white",
   fontSize: "16px",
   outline: "none",
+  boxSizing: "border-box",
 };
 
 const signupBtn = {

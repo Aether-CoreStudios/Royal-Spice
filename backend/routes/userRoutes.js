@@ -32,7 +32,7 @@ router.post("/signup", async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: "admin",
+      role: "user",
     });
 
     await newUser.save();
@@ -85,5 +85,36 @@ router.post("/login", async (req, res) => {
     });
   }
 });
+router.post("/google-login", async (req, res) => {
+  try {
+    const { name, email, googleId } = req.body;
 
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        googleId,
+        password: "google-auth-user",
+        role: "user",
+      });
+
+      await user.save();
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.status(200).json({
+      token,
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
 module.exports = router;

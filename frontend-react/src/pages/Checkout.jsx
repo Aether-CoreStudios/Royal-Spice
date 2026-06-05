@@ -1,13 +1,20 @@
-import React, { useContext, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { CartContext } from "../context/CartContext";
 import { motion } from "framer-motion";
-
+import React, { useState, useEffect, useContext } from "react";
 function Checkout() {
   const { cartItems, clearCart } = useContext(CartContext);
 
   const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please Login First");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,63 +29,77 @@ function Checkout() {
   const handlePayment = () => {
     if (!name || !email || !phone || !address) {
       alert("Please fill all details");
-
       return;
     }
 
     if (!window.Razorpay) {
       alert("Razorpay not loaded");
-
       return;
     }
 
     const options = {
       key: "rzp_test_StDNc3KaC2jMyg",
-
       amount: totalAmount * 100,
-
       currency: "INR",
-
       name: "Royal Spice Restaurant",
-
       description: "Luxury Dining Payment",
 
       handler: async function (response) {
+        console.log("Payment Success Response:", response);
+
         try {
-          await axios.post("https://royal-spice.onrender.com/api/orders", {
-            user: name,
-            email,
-            items: cartItems,
-            totalAmount,
+          console.log("Sending order to backend...");
 
-            paymentId: response.razorpay_payment_id,
-            paymentStatus: "Paid",
+          const result = await axios.post(
+            "https://royal-spice.onrender.com/api/orders",
+            {
+              user: name,
+              email,
+              items: cartItems,
+              totalAmount,
+              paymentId: response.razorpay_payment_id,
+              paymentStatus: "Paid",
+              refundStatus: "Not Required",
+              address,
+              phone,
+              orderStatus: "Preparing",
+            },
+            {
+              timeout: 10000,
+            },
+          );
 
-            refundStatus: "Not Required",
+          console.log("Order saved successfully");
+          console.log("Order Created:", result.data);
 
-            address,
-            phone,
-            orderStatus: "Preparing",
-          });
-
-          // CLEAR CART
           clearCart();
           localStorage.removeItem("cart");
 
-          alert("Payment Successful");
+          alert("Order Placed Successfully");
 
           navigate("/orders");
+          window.location.reload();
         } catch (error) {
-          console.log(error);
+          console.log("FULL ERROR:", error);
 
-          console.log(error.response);
+          if (error.response) {
+            console.log("STATUS:", error.response.status);
+            console.log("DATA:", error.response.data);
 
-          alert(error.response?.data?.message || "Order Failed");
+            alert(
+              error.response.data.message ||
+                JSON.stringify(error.response.data),
+            );
+          } else {
+            console.log("ERROR MESSAGE:", error.message);
+            alert(error.message);
+          }
         }
       },
+
       prefill: {
-        name: name,
-        email: email,
+        name,
+        email,
         contact: phone,
       },
 
@@ -88,7 +109,6 @@ function Checkout() {
     };
 
     const razorpay = new window.Razorpay(options);
-
     razorpay.open();
   };
 

@@ -1,21 +1,19 @@
 import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD7QgUjvwzqMu-K6jNN_-uv6ediqfHVUaA",
-
-  authDomain: "royalspicenotifications-c9f33.firebaseapp.com",
-
-  projectId: "royalspicenotifications-c9f33",
-
-  storageBucket: "royalspicenotifications-c9f33.firebasestorage.app",
-
-  messagingSenderId: "1089709861271",
-
-  appId: "1:1089709861271:web:60e4cf819b0b14e98d7cd2",
-
-  measurementId: "G-8J5H9ZL6Q9",
+  apiKey: "AIzaSyCMUjysAZ81GprAjYntDqJWxhFgcAiSm-4",
+  authDomain: "royal-spice-76aa7.firebaseapp.com",
+  projectId: "royal-spice-76aa7",
+  storageBucket: "royal-spice-76aa7.firebasestorage.app",
+  messagingSenderId: "884352306658",
+  appId: "1:884352306658:web:5fbb843d0a58ab71ccfdbb",
+  measurementId: "G-E4X3T8SCT9",
 };
 
 const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
 
 export default app;
