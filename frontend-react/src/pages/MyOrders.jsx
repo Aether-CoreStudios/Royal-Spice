@@ -21,8 +21,10 @@ function MyOrders() {
   }, [navigate]);
   const fetchOrders = async () => {
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
+
       const response = await axios.get(
-        "https://royal-spice.onrender.com/api/orders",
+        `https://royal-spice.onrender.com/api/orders/myorders/${user.email}`,
       );
 
       setOrders(response.data);

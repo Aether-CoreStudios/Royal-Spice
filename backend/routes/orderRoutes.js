@@ -120,7 +120,23 @@ router.get("/", protect, adminOnly, async (req, res) => {
     });
   }
 });
+/* =========================
+   GET MY ORDERS
+========================= */
 
+router.get("/myorders/:email", async (req, res) => {
+  try {
+    const orders = await Order.find({
+      email: req.params.email,
+    }).sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
 /* =========================
    GET SINGLE ORDER (ADMIN ONLY)
 ========================= */
