@@ -6,14 +6,37 @@ const roomSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+
   roomType: {
     type: String,
     required: true,
   },
+
   price: {
     type: Number,
     required: true,
   },
+
+  rating: {
+    type: Number,
+    default: 4.5,
+  },
+
+  capacity: {
+    type: Number,
+    default: 2,
+  },
+
+  images: {
+    type: [String],
+    default: [],
+  },
+
+  amenities: {
+    type: [String],
+    default: [],
+  },
+
   status: {
     type: String,
     enum: ["available", "booked", "maintenance"],

@@ -1,13 +1,12 @@
 const express = require("express");
-
 const Order = require("../models/order");
-
 const sendEmail = require("../utils/sendEmail");
+const { protect, adminOnly } = require("../middleware/authMiddleware");
 
 const router = express.Router();
-const User = require("../models/user");
+
 /* =========================
-   CREATE ORDER
+   CREATE ORDER (PUBLIC)
 ========================= */
 
 router.post("/", async (req, res) => {
@@ -38,7 +37,7 @@ router.post("/", async (req, res) => {
       totalAmount,
       paymentId,
       paymentStatus: paymentStatus || "Paid",
-      refundStatus: refundStatus || "Not Required",
+      refundStatus: refundStatus || "not_required",
       address,
       phone,
       orderStatus: orderStatus || "Preparing",
@@ -74,15 +73,45 @@ Thank you for ordering from Royal Spice.`,
     });
   }
 });
+
 /* =========================
-   GET ALL ORDERS
+   DASHBOARD STATS (ADMIN ONLY)
 ========================= */
 
-router.get("/", async (req, res) => {
+router.get("/stats/dashboard", protect, adminOnly, async (req, res) => {
   try {
-    const orders = await Order.find().sort({
-      createdAt: -1,
+    const totalOrders = await Order.countDocuments();
+
+    const totalRevenueData = await Order.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totalAmount" },
+        },
+      },
+    ]);
+
+    const totalRevenue =
+      totalRevenueData.length > 0 ? totalRevenueData[0].totalRevenue : 0;
+
+    res.json({
+      totalOrders,
+      totalRevenue,
     });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+/* =========================
+   GET ALL ORDERS (ADMIN ONLY)
+========================= */
+
+router.get("/", protect, adminOnly, async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
 
     res.status(200).json(orders);
   } catch (error) {
@@ -91,11 +120,12 @@ router.get("/", async (req, res) => {
     });
   }
 });
+
 /* =========================
-   GET SINGLE ORDER
+   GET SINGLE ORDER (ADMIN ONLY)
 ========================= */
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", protect, adminOnly, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
 
@@ -114,31 +144,26 @@ router.get("/:id", async (req, res) => {
 });
 
 /* =========================
-   UPDATE ORDER STATUS
+   UPDATE ORDER STATUS (ADMIN ONLY)
 ========================= */
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect, adminOnly, async (req, res) => {
   try {
-    const updatedOrder = await Order.findByIdAndUpdate(
-      req.params.id,
+    const order = await Order.findById(req.params.id);
 
-      {
-        orderStatus: req.body.orderStatus,
-      },
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
 
-      {
-        new: true,
-      },
-    );
+    order.orderStatus = req.body.orderStatus;
+    await order.save();
 
-    // SEND STATUS EMAIL
+    const updatedOrder = order;
 
-    if (updatedOrder.email) {
-      await sendEmail(
+    if (updatedOrder?.email) {
+      sendEmail(
         updatedOrder.email,
-
         `Order Status Updated - ${updatedOrder.orderStatus}`,
-
         `Hello ${updatedOrder.user},
 
 Your order status is now:
@@ -146,7 +171,7 @@ Your order status is now:
 ${updatedOrder.orderStatus}
 
 Thank you for choosing Royal Spice.`,
-      );
+      ).catch((err) => console.log(err));
     }
 
     res.status(200).json({
@@ -161,16 +186,33 @@ Thank you for choosing Royal Spice.`,
 });
 
 /* =========================
-   DELETE ORDER
+   CANCEL ORDER (SOFT DELETE - ADMIN ONLY)
 ========================= */
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protect, adminOnly, async (req, res) => {
   try {
-    await Order.findByIdAndDelete(req.params.id);
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+      });
+    }
+
+    if (order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        message: "Order already cancelled",
+      });
+    }
+
+    order.orderStatus = "Cancelled";
+    order.refundStatus = "requested";
+
+    await order.save();
 
     res.json({
       success: true,
-      message: "Order deleted",
+      message: "Order cancelled successfully",
     });
   } catch (error) {
     res.status(500).json({
@@ -178,4 +220,5 @@ router.delete("/:id", async (req, res) => {
     });
   }
 });
+
 module.exports = router;

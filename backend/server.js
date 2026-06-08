@@ -19,7 +19,9 @@ const app = express();
 const cron = require("node-cron");
 const expireReservations = require("./utils/expireReservations");
 const invoiceRoutes = require("./routes/invoiceRoutes");
+const authRoutes = require("./routes/authRoutes");
 
+app.use("/api/auth", authRoutes);
 /* =========================
    SECURITY MIDDLEWARE
 ========================= */

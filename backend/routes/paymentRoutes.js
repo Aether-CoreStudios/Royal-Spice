@@ -90,7 +90,10 @@ REFUND PAYMENT
 router.post("/refund", async (req, res) => {
   try {
     const { paymentId, amount } = req.body;
-
+    console.log("REFUND REQUEST");
+    console.log("BODY:", req.body);
+    console.log("PAYMENT ID:", req.body.paymentId);
+    console.log("AMOUNT:", req.body.amount);
     if (!paymentId) {
       return res.status(400).json({
         success: false,

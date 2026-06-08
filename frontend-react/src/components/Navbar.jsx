@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
@@ -37,32 +38,40 @@ function Navbar() {
     >
       {/* LOGO */}
 
-      <div>
-        <h1
-          className="logo"
-          style={{
-            color: "#C8973A",
-            fontSize: "52px",
-            margin: 0,
-            fontFamily: "serif",
-            lineHeight: "50px",
-          }}
-        >
-          Royal Spice
-        </h1>
+      <Link
+        to="/"
+        style={{
+          textDecoration: "none",
+          cursor: "pointer",
+        }}
+      >
+        <div>
+          <h1
+            className="logo"
+            style={{
+              color: "#C8973A",
+              fontSize: "52px",
+              margin: 0,
+              fontFamily: "serif",
+              lineHeight: "50px",
+            }}
+          >
+            Royal Spice
+          </h1>
 
-        <p
-          style={{
-            color: "#d1d5db",
-            letterSpacing: "6px",
-            margin: 0,
-            marginTop: "4px",
-            fontSize: "14px",
-          }}
-        >
-          LUXURY DINING
-        </p>
-      </div>
+          <p
+            style={{
+              color: "#d1d5db",
+              letterSpacing: "6px",
+              margin: 0,
+              marginTop: "4px",
+              fontSize: "14px",
+            }}
+          >
+            LUXURY DINING
+          </p>
+        </div>
+      </Link>
       {/* NAV LINKS */}
 
       <div
@@ -174,6 +183,19 @@ function Navbar() {
           })}
         >
           Rooms
+        </NavLink>
+        <NavLink
+          to="/contact"
+          style={({ isActive }) => ({
+            color: isActive ? "#C8973A" : "white",
+            borderBottom: isActive ? "2px solid #C8973A" : "none",
+            paddingBottom: "5px",
+            textDecoration: "none",
+            fontWeight: "bold",
+            transition: "0.3s",
+          })}
+        >
+          Contact
         </NavLink>
         <NavLink
           to="/delivery-map"

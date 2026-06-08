@@ -19,7 +19,6 @@ import {
 
 function Admin() {
   const navigate = useNavigate();
-
   const [orders, setOrders] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [reservations, setReservations] = useState([]);
@@ -27,66 +26,70 @@ function Admin() {
   const [searchReservation, setSearchReservation] = useState("");
   const [activeSection, setActiveSection] = useState("dashboard");
 
+  // USE EFFECT
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+
+    // initial load
     fetchOrders();
     fetchMenu();
     fetchReservations();
+
+    // safer interval (15 seconds instead of 5)
+    const interval = setInterval(() => {
+      fetchOrders();
+      fetchMenu();
+      fetchReservations();
+    }, 15000);
+
+    return () => clearInterval(interval);
   }, []);
-
-  // FETCH ORDERS
-
+  // FETCH MENU
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(
+      const res = await axios.get(
         "https://royal-spice.onrender.com/api/orders",
       );
 
-      setOrders(response.data);
+      setOrders(res.data);
 
-      const revenue = response.data.reduce(
+      const revenue = res.data.reduce(
         (total, order) => total + (order.totalAmount || 0),
         0,
       );
 
       setTotalRevenue(revenue);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
     }
   };
-  // FETCH RESERVATIONS
 
   const fetchReservations = async () => {
     try {
-      const response = await axios.get(
+      const res = await axios.get(
         "https://royal-spice.onrender.com/api/reservations",
       );
 
-      if (Array.isArray(response.data)) {
-        setReservations(response.data);
-      } else if (response.data.reservations) {
-        setReservations(response.data.reservations);
-      } else {
-        setReservations([]);
-      }
-    } catch (error) {
-      console.log(error);
+      setReservations(res.data.reservations || res.data || []);
+    } catch (err) {
+      console.log(err);
       setReservations([]);
     }
   };
-  // FETCH MENU
 
   const fetchMenu = async () => {
     try {
-      const response = await axios.get(
-        "https://royal-spice.onrender.com/api/menu",
-      );
+      const res = await axios.get("https://royal-spice.onrender.com/api/menu");
 
-      setMenuItems(response.data);
-    } catch (error) {
-      console.log(error);
+      setMenuItems(res.data);
+    } catch (err) {
+      console.log(err);
     }
   };
-
   // LOGOUT
 
   const handleLogout = () => {
@@ -98,17 +101,25 @@ function Admin() {
 
   // ANALYTICS DATA
 
-  const revenueData = [
-    { month: "Jan", revenue: 12000 },
-    { month: "Feb", revenue: 18000 },
-    { month: "Mar", revenue: 15000 },
-    { month: "Apr", revenue: 24000 },
-    { month: "May", revenue: 28000 },
-    {
-      month: "Jun",
-      revenue: totalRevenue || 32000,
-    },
-  ];
+  const revenueData = orders.reduce((acc, order) => {
+    const month = new Date(order.createdAt || Date.now()).toLocaleString(
+      "default",
+      { month: "short" },
+    );
+
+    const existing = acc.find((item) => item.month === month);
+
+    if (existing) {
+      existing.revenue += order.totalAmount || 0;
+    } else {
+      acc.push({
+        month,
+        revenue: order.totalAmount || 0,
+      });
+    }
+
+    return acc;
+  }, []);
 
   const salesData = [
     {
@@ -161,8 +172,12 @@ function Admin() {
     try {
       await axios.delete(
         "https://royal-spice.onrender.com/api/reservations/cancel-all",
+        {
+          headers: {
+            admin: "true",
+          },
+        },
       );
-
       setReservations([]);
 
       alert("All reservations cancelled successfully");
@@ -681,8 +696,7 @@ function Admin() {
                 }}
               >
                 {reservations
-                  .filter((item) => item.status !== "Cancelled")
-                  .filter((item) => item.status !== "Expired")
+                  .filter((item) => item.status !== "cancelled")
                   .filter((item) =>
                     item.name
                       ?.toLowerCase()
@@ -744,7 +758,7 @@ function Admin() {
 
                       <p>
                         <strong style={{ color: "#C8973A" }}>Date:</strong>{" "}
-                        {item.date}
+                        {new Date(item.date).toLocaleDateString()}
                       </p>
 
                       <p>
@@ -773,7 +787,7 @@ function Admin() {
                         </strong>
 
                         <span style={{ color: "#f59e0b", fontWeight: "bold" }}>
-                          {item.refundStatus || "Pending"}
+                          {item.refundStatus || "requested"}
                         </span>
                       </p>
 
@@ -816,7 +830,7 @@ function Admin() {
                         onClick={async () => {
                           try {
                             const confirmRefund = window.confirm(
-                              `Refund reservation payment for ${item.name}?`,
+                              `Refund reservation for ${item.name}?`,
                             );
 
                             if (!confirmRefund) return;
@@ -831,10 +845,16 @@ function Admin() {
 
                             alert("Refund Successful");
 
-                            fetchReservations();
+                            // instant UI update like orders
+                            setReservations((prev) =>
+                              prev.map((r) =>
+                                r._id === item._id
+                                  ? { ...r, refundStatus: "refunded" }
+                                  : r,
+                              ),
+                            );
                           } catch (error) {
                             console.log(error);
-
                             alert(
                               error.response?.data?.message || "Refund Failed",
                             );
@@ -849,6 +869,7 @@ function Admin() {
                           borderRadius: "12px",
                           cursor: "pointer",
                           width: "100%",
+                          fontWeight: "bold",
                         }}
                       >
                         Refund Reservation
@@ -868,7 +889,7 @@ function Admin() {
 
             {orders.map((order, index) => (
               <motion.div
-                key={index}
+                key={order._id}
                 whileHover={{
                   scale: 1.01,
                 }}
@@ -944,6 +965,7 @@ function Admin() {
                     >
                       Delete Order
                     </button>
+
                     <button
                       onClick={async () => {
                         try {
@@ -988,15 +1010,24 @@ function Admin() {
                     <select
                       value={order.orderStatus || "Preparing"}
                       onChange={async (e) => {
+                        const newStatus = e.target.value;
+
                         try {
                           await axios.put(
                             `https://royal-spice.onrender.com/api/orders/${order._id}`,
                             {
-                              orderStatus: e.target.value,
+                              orderStatus: newStatus,
                             },
                           );
 
-                          fetchOrders();
+                          // ✅ instant UI update
+                          setOrders((prev) =>
+                            prev.map((o) =>
+                              o._id === order._id
+                                ? { ...o, orderStatus: newStatus }
+                                : o,
+                            ),
+                          );
                         } catch (error) {
                           console.log(error);
                         }

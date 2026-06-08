@@ -72,6 +72,7 @@ function AdminRoomBookings() {
     }
   };
   const refundPayment = async (booking) => {
+    console.log("BOOKING DATA:", booking);
     try {
       const confirmRefund = window.confirm(
         `Refund payment for ${booking.customerName}?`,
@@ -79,6 +80,7 @@ function AdminRoomBookings() {
 
       if (!confirmRefund) return;
 
+      console.log("PAYMENT ID:", booking.paymentId);
       await axios.post("https://royal-spice.onrender.com/api/payment/refund", {
         paymentId: booking.paymentId,
         amount: booking.amount,

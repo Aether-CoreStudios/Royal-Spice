@@ -7,7 +7,7 @@ function Home() {
       style={{
         background: "#0B0F19",
         color: "white",
-        paddingTop: "160px",
+        paddingTop: "98px",
       }}
     >
       {/* HERO */}

@@ -14,16 +14,17 @@ import MyOrders from "./pages/MyOrders";
 import Reservation from "./pages/Reservation";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup"; // <-- ADD THIS
-
+import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 
 import DeliveryMap from "./pages/DeliveryMap";
-
+import Footer from "./components/Footer";
 import Rooms from "./pages/Rooms";
 import RoomBooking from "./pages/RoomBooking";
 import AdminRoomBookings from "./pages/AdminRoomBookings";
-
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -67,15 +68,18 @@ function App() {
         />
 
         <Route path="/delivery-map" element={<DeliveryMap />} />
-
+        <Route path="/contact" element={<Contact />} />
         <Route path="/rooms" element={<Rooms />} />
 
         <Route path="/room-booking" element={<RoomBooking />} />
 
         <Route path="/admin-room-bookings" element={<AdminRoomBookings />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
       </Routes>
 
       <AIWaiter />
+      <Footer />
     </BrowserRouter>
   );
 }
