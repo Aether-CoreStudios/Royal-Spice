@@ -25,7 +25,6 @@ app.use("/api/auth", authRoutes);
 /* =========================
    SECURITY MIDDLEWARE
 ========================= */
-const app = express();
 
 // ADD THIS
 app.set("trust proxy", 1);
