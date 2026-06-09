@@ -38,40 +38,50 @@ function Admin() {
     fetchOrders();
     fetchMenu();
     fetchReservations();
+    fetchDashboardStats();
 
     // safer interval (15 seconds instead of 5)
     const interval = setInterval(() => {
       fetchOrders();
       fetchMenu();
       fetchReservations();
-    }, 15000);
+      fetchDashboardStats();
+    }, 60000);
 
     return () => clearInterval(interval);
   }, []);
   // FETCH MENU
   const fetchOrders = async () => {
+    const token = localStorage.getItem("token");
+    console.log("TOKEN:", token);
     try {
+      const token = localStorage.getItem("token");
+
       const res = await axios.get(
         "https://royal-spice.onrender.com/api/orders",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       setOrders(res.data);
-
-      const revenue = res.data.reduce(
-        (total, order) => total + (order.totalAmount || 0),
-        0,
-      );
-
-      setTotalRevenue(revenue);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   };
-
   const fetchReservations = async () => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await axios.get(
         "https://royal-spice.onrender.com/api/reservations",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       setReservations(res.data.reservations || res.data || []);
@@ -88,6 +98,24 @@ function Admin() {
       setMenuItems(res.data);
     } catch (err) {
       console.log(err);
+    }
+  };
+  const fetchDashboardStats = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        "https://royal-spice.onrender.com/api/orders/stats/dashboard",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setTotalRevenue(res.data.totalRevenue);
+    } catch (error) {
+      console.log(error);
     }
   };
   // LOGOUT

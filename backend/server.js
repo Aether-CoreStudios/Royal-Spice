@@ -25,7 +25,10 @@ app.use("/api/auth", authRoutes);
 /* =========================
    SECURITY MIDDLEWARE
 ========================= */
+const app = express();
 
+// ADD THIS
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin: ["http://localhost:3000", "https://royal-spice-alpha.vercel.app"],
@@ -43,7 +46,7 @@ app.use(helmet());
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
 
-  max: 100,
+  max: 5000,
 
   message: "Too many requests, please try again later.",
 });
