@@ -2,11 +2,7 @@ import foodBg from "../images/food-login.jpg";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  signInWithPopup,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 
 function Login() {
@@ -19,43 +15,37 @@ function Login() {
     e.preventDefault();
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password,
+      const response = await axios.post(
+        "https://royal-spice.onrender.com/api/auth/login",
+        {
+          email,
+          password,
+        },
       );
 
-      await userCredential.user.reload();
-
-      if (!userCredential.user.emailVerified) {
-        alert("Please verify your email before logging in.");
-        return;
-      }
+      localStorage.setItem("token", response.data.token);
 
       localStorage.setItem(
         "user",
         JSON.stringify({
-          uid: userCredential.user.uid,
-          email: userCredential.user.email,
-          name: userCredential.user.displayName || "User",
+          _id: response.data._id,
+          name: response.data.name,
+          email: response.data.email,
+          role: response.data.role,
         }),
       );
 
-      // Store Firebase token so Navbar recognizes login
-      localStorage.setItem("token", await userCredential.user.getIdToken());
-
       alert("Login Successful");
-      navigate("/");
+
+      if (response.data.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.log(error);
 
-      if (error.code === "auth/invalid-credential") {
-        alert(
-          "Invalid email or password. Please check your credentials or click 'Forgot Password?' to reset your password.",
-        );
-      } else {
-        alert(error.message);
-      }
+      alert(error.response?.data?.message || "Login failed");
     }
   };
 
