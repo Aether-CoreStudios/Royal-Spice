@@ -3,57 +3,64 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const chatbotRoutes = require("./routes/chatbotRoutes");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const cron = require("node-cron");
+
+const chatbotRoutes = require("./routes/chatbotRoutes");
 const roomRoutes = require("./routes/roomRoutes");
 const roomBookingRoutes = require("./routes/roomBookingRoutes");
-
 const userRoutes = require("./routes/userRoutes");
 const menuRoutes = require("./routes/menuRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
-
-const app = express();
-const cron = require("node-cron");
-const expireReservations = require("./utils/expireReservations");
 const invoiceRoutes = require("./routes/invoiceRoutes");
 const authRoutes = require("./routes/authRoutes");
 
-app.use("/api/auth", authRoutes);
+const expireReservations = require("./utils/expireReservations");
+
+const app = express();
+
 /* =========================
-   SECURITY MIDDLEWARE
+   TRUST PROXY
 ========================= */
 
-// ADD THIS
 app.set("trust proxy", 1);
+
+/* =========================
+   CORS
+========================= */
+
 app.use(
   cors({
     origin: ["http://localhost:3000", "https://royal-spice-alpha.vercel.app"],
     credentials: true,
   }),
 );
+
+/* =========================
+   BODY PARSER
+========================= */
+
 app.use(express.json());
 
-app.use("/api/chatbot", chatbotRoutes);
-app.use("/api/rooms", roomRoutes);
-app.use("/api/room-bookings", roomBookingRoutes);
-app.use("/api/invoices", invoiceRoutes);
+/* =========================
+   SECURITY
+========================= */
+
 app.use(helmet());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-
   max: 5000,
-
   message: "Too many requests, please try again later.",
 });
 
 app.use(limiter);
 
 /* =========================
-   API HEALTH CHECK
+   HEALTH CHECK
 ========================= */
 
 app.get("/", (req, res) => {
@@ -66,6 +73,8 @@ app.get("/", (req, res) => {
    API ROUTES
 ========================= */
 
+app.use("/api/auth", authRoutes);
+
 app.use("/api/users", userRoutes);
 
 app.use("/api/menu", menuRoutes);
@@ -75,6 +84,26 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/reservations", reservationRoutes);
 
 app.use("/api/payment", paymentRoutes);
+
+app.use("/api/chatbot", chatbotRoutes);
+
+app.use("/api/rooms", roomRoutes);
+
+app.use("/api/room-bookings", roomBookingRoutes);
+
+app.use("/api/invoices", invoiceRoutes);
+
+/* =========================
+   CRON JOBS
+========================= */
+
+cron.schedule("* * * * *", async () => {
+  try {
+    await expireReservations();
+  } catch (error) {
+    console.error("Reservation expiration error:", error);
+  }
+});
 
 /* =========================
    GLOBAL ERROR HANDLER
@@ -89,12 +118,11 @@ app.use((err, req, res, next) => {
 });
 
 /* =========================
-   MONGODB CONNECTION
+   DATABASE CONNECTION
 ========================= */
 
 mongoose
   .connect(process.env.MONGO_URI)
-
   .then(() => {
     console.log("MongoDB Connected");
 
@@ -104,7 +132,6 @@ mongoose
       console.log(`Server Running on Port ${PORT}`);
     });
   })
-
   .catch((err) => {
-    console.log("MongoDB Error:", err);
+    console.error("MongoDB Error:", err);
   });
