@@ -73,20 +73,4 @@ router.get("/test", (req, res) => {
   res.json({ message: "Auth route working" });
 });
 
-/* TEMP PASSWORD RESET ROUTE */
-router.get("/reset-admin-password", async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash("Admin@123", 10);
-
-    await User.updateOne(
-      { email: "karthickdhoni80@gmail.com" },
-      { $set: { password: hashedPassword } },
-    );
-
-    res.json({ message: "Password reset successful" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 module.exports = router;
